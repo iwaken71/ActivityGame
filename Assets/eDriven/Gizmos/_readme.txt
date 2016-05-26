@@ -1,0 +1,1 @@
+Move the "Gizmos" folder into the root folder ("Assets").
