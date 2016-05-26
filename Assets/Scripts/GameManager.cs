@@ -3,8 +3,10 @@ using System.Collections;
 
 public class GameManager : Photon.MonoBehaviour {
 
-	private static GameManager instance = null;
 	public float timer = 60;
+	public AudioClip[] audioclips;
+
+	private static GameManager instance = null;
 	bool isGame = false;
 	ScoreScript scoreScript;
 	State state = State.Ready;
@@ -13,7 +15,6 @@ public class GameManager : Photon.MonoBehaviour {
 	float countDownTime = 3;
 	string resultMessage = "";
 	Color winColor = Color.blue;
-	public AudioClip[] audioclips;
 	Animator canvasAnim;
 
 	enum State{
@@ -27,7 +28,6 @@ public class GameManager : Photon.MonoBehaviour {
 		} else {
 			Destroy (this.gameObject);
 		}
-
 	}
 
 	void OnJoinedRoom() {
