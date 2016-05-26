@@ -31,9 +31,11 @@ public class ThirdPersonCamera2 : MonoBehaviour
 			jumpPos = GameObject.Find ("JumpPos").transform;
 */
 		//カメラをスタートする
-		transform.position = standardPos.position;	
-		transform.forward = standardPos.forward;	
-		transform.parent = null;
+		if (standardPos != null) {
+			transform.position = standardPos.position;	
+			transform.forward = standardPos.forward;	
+			transform.parent = null;
+		}
 	}
 
 	
@@ -54,8 +56,10 @@ public class ThirdPersonCamera2 : MonoBehaviour
 	{
 		if(bQuickSwitch == false){
 		// the camera to standard position and direction
-						transform.position = Vector3.Lerp(transform.position, standardPos.position, Time.fixedDeltaTime * smooth);	
-						transform.forward = Vector3.Lerp(transform.forward, standardPos.forward, Time.fixedDeltaTime * smooth);
+			if (standardPos != null) {
+				transform.position = Vector3.Lerp (transform.position, standardPos.position, Time.fixedDeltaTime * smooth);	
+				transform.forward = Vector3.Lerp (transform.forward, standardPos.forward, Time.fixedDeltaTime * smooth);
+			}
 		}
 		else{
 			// the camera to standard position and direction / Quick Change

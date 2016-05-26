@@ -269,6 +269,7 @@ public class UnityChanControlScriptWithRgidBody : Photon.MonoBehaviour
 					anim.SetBool ("damage", true);
 					source.clip = clip; //倒れる声
 					source.Play ();
+					Invoke ("ReturnStart",1.0f);
 				}
 			}
 		}
@@ -278,5 +279,11 @@ public class UnityChanControlScriptWithRgidBody : Photon.MonoBehaviour
 			return a;
 		else
 			return -a;
+	}
+
+	void ReturnStart(){
+		GameObject[] points = GameObject.FindGameObjectsWithTag ("StartPoint");
+		int index = Random.Range (0,points.Length); 
+		transform.position = points [index].transform.position;
 	}
 }

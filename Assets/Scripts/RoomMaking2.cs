@@ -62,16 +62,22 @@ public class RoomMaking2 : Photon.MonoBehaviour {
 	public void GameStart(){
 		if (inRoom) {
 			Vector3 spawnPosition = new Vector3 (Random.Range (-10, 10), 5, Random.Range (-10, 10)); //生成位置
+
+			// playerの生成、場所はランダム
 			GameObject player = PhotonNetwork.Instantiate ("unitychanPrefab", spawnPosition, this.transform.rotation, 0) as GameObject;
+
+			// ScriptをOn
 			player.GetComponent<UnityChanControlScriptWithRgidBody> ().enabled = true;
-			//int ID = PhotonNetwork.player.ID;
-			//player.SendMessage ("SetID",ID);
+
+			// Playerを追いかけるカメラを生成、同期はしない
 			GameObject camera = Instantiate (Resources.Load("Camera1"), spawnPosition, this.transform.rotation) as GameObject;
-			ThirdPersonCamera2 script = camera.GetComponent<ThirdPersonCamera2> ();
-			script.jumpPos = player.transform.FindChild ("JumpPos").transform;
-			script.standardPos = player.transform.FindChild ("CamPos").transform;
-			script.frontPos = player.transform.FindChild ("FrontPos").transform;
-			//loadingPanel.SetActive (false);
+
+			// cameraのスクリプトを取得、設定
+			ThirdPersonCamera2 cameraScript = camera.GetComponent<ThirdPersonCamera2> ();
+			cameraScript.jumpPos = player.transform.FindChild ("JumpPos").transform;
+			cameraScript.standardPos = player.transform.FindChild ("CamPos").transform;
+			cameraScript.frontPos = player.transform.FindChild ("FrontPos").transform;
+
 
 			//GameObject headCube =  PhotonNetwork.Instantiate ("HeadCube", spawnPosition, this.transform.rotation, 0) as GameObject;
 			//headCube.transform.parent = player.transform;
