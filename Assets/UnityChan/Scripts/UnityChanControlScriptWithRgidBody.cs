@@ -266,10 +266,13 @@ public class UnityChanControlScriptWithRgidBody : Photon.MonoBehaviour
 			if (col.gameObject.tag == "Tofu") {
 				float n = script.mycolor.r + script.mycolor.b * 10 + script.mycolor.g * 100;
 				if (Abs (n - col.gameObject.GetComponent<TofuScript> ().myColorNumber) > 0.01f) {
+					if(anim.GetBool("damage") == false){
 					anim.SetBool ("damage", true);
 					source.clip = clip; //倒れる声
 					source.Play ();
+					GameObject.Find ("Canvas").GetComponent<Animator> ().SetTrigger ("dead");
 					Invoke ("ReturnStart",1.0f);
+					}
 				}
 			}
 		}
@@ -283,7 +286,7 @@ public class UnityChanControlScriptWithRgidBody : Photon.MonoBehaviour
 
 	void ReturnStart(){
 		GameObject[] points = GameObject.FindGameObjectsWithTag ("StartPoint");
-		int index = Random.Range (0,points.Length); 
+		int index = Random.Range (0,points.Length-1); 
 		transform.position = points [index].transform.position;
 	}
 }
