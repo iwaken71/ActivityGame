@@ -22,6 +22,7 @@ public class GameManager : Photon.MonoBehaviour {
 	int result_num = 0;
 	List<ScorePoint> pointList = new List<ScorePoint>(); 
 	int playernum = 0;
+	int readynum;
 
 
 	enum State{
@@ -65,6 +66,7 @@ public class GameManager : Photon.MonoBehaviour {
 				audioSource.clip = audioclips [0];
 				audioSource.Play ();
 			}
+			playernum = PhotonNetwork.playerList.Length;
 			break;
 		case State.PreGame:
 			countDownTime -= Time.deltaTime;
@@ -82,10 +84,12 @@ public class GameManager : Photon.MonoBehaviour {
 			break;
 		case State.Game:
 			timer -= Time.deltaTime;
+			Debug.Log (PhotonNetwork.countOfPlayers);
 			if (timer < 0) {
 				state = State.Result;
 				Result ();
-				playernum = PhotonNetwork.countOfPlayers;
+				playernum = PhotonNetwork.playerList.Length;
+
 				//Invoke ("Calculation",2.0f);
 			}
 			//PhotonNetwork.player.SetScore (scoreScript.myScore);
@@ -106,16 +110,27 @@ public class GameManager : Photon.MonoBehaviour {
 
 	void Result(){
 		//PhotonNetwork.player.SetScore (scoreScript.myScore);
-		ScorePoint myPoint = new ScorePoint (PhotonNetwork.player.ID,PhotonNetwork.playerName,scoreScript.myScore);
+		//ScorePoint myPoint = new ScorePoint (PhotonNetwork.player.ID,PhotonNetwork.playerName,scoreScript.myScore);
 		//pointList.Add (myPoint);
 		//result_num++;
-		m_photonView.RPC ("SendPoint",PhotonTargets.All,myPoint);
+		m_photonView.RPC ("SendPoint",PhotonTargets.All,PhotonNetwork.player.ID,PhotonNetwork.playerName,scoreScript.myScore);
 	}
 	void Calculation(){
 		string max_Player = "--";
 		int max_Score = -1;
 		int max_id = -1;
 
+		var newList = pointList
+			.OrderByDescending (point => point.score)
+			.ToList();
+		string mes = "";
+		int num = 1;//順位
+		foreach (ScorePoint score in newList){
+			mes += "No." + num.ToString () + ": " + score.GetName () + " Score: " + score.GetScore ().ToString()+"\n";
+			num++;
+		}
+		resultMessage = mes;
+		/*
 		foreach (ScorePoint score in pointList) {
 			if (score.GetScore () > max_Score) {
 				max_Score = score.GetScore ();
@@ -129,6 +144,7 @@ public class GameManager : Photon.MonoBehaviour {
 		} else {
 			resultMessage = "1位:" + max_Player + " Score:" + max_Score.ToString ()+"\n"+"残念...";
 		}
+		*/
 
 		
 	}
@@ -211,7 +227,8 @@ public class GameManager : Photon.MonoBehaviour {
 		}
 	}
 	[PunRPC]
-	void SendPoint(ScorePoint point1){
+	void SendPoint(int id,string name,int score){
+		ScorePoint point1 = new ScorePoint (id,name,score);
 		pointList.Add (point1);
 		result_num++;
 	}
