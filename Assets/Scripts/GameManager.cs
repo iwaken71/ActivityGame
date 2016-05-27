@@ -9,6 +9,8 @@ public class GameManager : Photon.MonoBehaviour {
 
 	public AudioClip[] audioclips;
 	public float MaxTime = 60;
+
+
 	float timer = 0;
 	private static GameManager instance = null;
 	bool isGame = false;
@@ -46,6 +48,7 @@ public class GameManager : Photon.MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
+		
 		scoreScript = GameObject.FindGameObjectWithTag ("ScoreManager").GetComponent<ScoreScript>();
 		State state = State.Ready;
 		m_photonView = this.GetComponent<PhotonView>();

@@ -78,7 +78,7 @@ public class ColorScript : Photon.MonoBehaviour {
 				timer -= Time.deltaTime;
 			}
 
-			if ((Input.GetKeyUp ("x")||/*Input.GetMouseButtonUp(0)||*/Input.GetKeyUp("k"))&& term >= 0 && timer <= 0) {
+			if (Input.GetKeyUp (KeyCode.Space)/*Input.GetMouseButtonUp(0)||*/&& term >= 0 && timer <= 0) {
 				Shot ();
 				term -= Time.deltaTime;
 				chargetime = 0;
@@ -87,7 +87,7 @@ public class ColorScript : Photon.MonoBehaviour {
 					term = 0.2f;
 				}
 			}
-			if ((Input.GetKey ("x") || /*Input.GetMouseButton (0) ||*/ Input.GetKey ("k"))) {
+			if (Input.GetKey (KeyCode.Space)){
 				if (chargetime <= 3) {
 					chargetime += Time.deltaTime;
 				}

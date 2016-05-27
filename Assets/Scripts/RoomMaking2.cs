@@ -13,28 +13,11 @@ public class RoomMaking2 : Photon.MonoBehaviour {
 	//public GameObject loadingPanel; //loadingPanel
 
 	void Start () {
-		
-		//if (Application.loadedLevelName == "Start") {
-			PhotonNetwork.ConnectUsingSettings ("v0.1");
-		//	DontDestroyOnLoad (this);
-	//	} else {
-			
-		//}
-		//	魔法の呪文
-	
-		//	if (!GameObject.Find ("StartCanvas").GetComponent<Canvas>().enabled) {
-		//		GameStart ();
-		//	}
+		PhotonNetwork.ConnectUsingSettings ("v0.1");
 	}
 
 	// Update is called once per frame
-	void Update () {/*
-		if (!isStart && Application.loadedLevelName == "Unitychan") {
-
-			GameStart ();
-			isStart = true;
-
-		}*/
+	void Update () {
 
 	}
 
@@ -51,10 +34,7 @@ public class RoomMaking2 : Photon.MonoBehaviour {
 
 	//  JoinRandomRoom()が失敗した(false)時に呼ばれる
 	void OnPhotonRandomJoinFailed(){
-		//  部屋に入れなかったので自分で作る
-		//if (SceneManager.GetActiveScene ().name == "Unitychan") {
 		PhotonNetwork.CreateRoom (null);
-		//}
 	}
 
 	//  ルームに入れた時に呼ばれる（自分の作ったルームでも）
@@ -106,7 +86,7 @@ public class RoomMaking2 : Photon.MonoBehaviour {
 
 	void OnGUI() {
 		// Photon接続状態
-		if (SceneManager.GetActiveScene ().name != "Unitychan") {
+		if (SceneManager.GetActiveScene ().name == "Start") {
 			GUILayout.Label ("対戦待ち" + PhotonNetwork.countOfPlayersOnMaster.ToString () + "人");
 			GUILayout.Label ("対戦中" + PhotonNetwork.countOfRooms.ToString () + "人");
 		}

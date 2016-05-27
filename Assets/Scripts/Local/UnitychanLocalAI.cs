@@ -49,7 +49,7 @@ public class UnitychanLocalAI : MonoBehaviour
 	AudioSource source;
 	public AudioClip clip;// 倒れた時の声
 	public GameObject point;
-	public Transform[] points;
+	GameObject[] points;
 	float h,v;
 	Vector3 direction = Vector3.zero;
 	Vector3 destinaton;
@@ -81,8 +81,8 @@ public class UnitychanLocalAI : MonoBehaviour
 		for (int i = 0; i < points.Length; i++) {
 			points [i] = point.transform.GetChild (i).transform;
  		}*/
-
-		destinaton = points [Random.Range (0, points.Length)].position;
+		GameObject[] points = GameObject.FindGameObjectsWithTag ("StartPoint");
+		destinaton = points [Random.Range (0, points.Length)].transform.position;
 
 	}
 	public void SetID(int ID){
@@ -116,7 +116,7 @@ public class UnitychanLocalAI : MonoBehaviour
 			}
 
 			if ((destinaton - transform.position).magnitude < 1) {
-				destinaton = points [Random.Range (0, points.Length)].position;
+				destinaton = points [Random.Range (0, points.Length)].transform.position;
 			}
 		}
 
