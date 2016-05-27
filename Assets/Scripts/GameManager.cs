@@ -6,9 +6,10 @@ using System.Linq;
 
 public class GameManager : Photon.MonoBehaviour {
 
-	public float timer = 60;
-	public AudioClip[] audioclips;
 
+	public AudioClip[] audioclips;
+	public float MaxTime = 60;
+	float timer = 0;
 	private static GameManager instance = null;
 	bool isGame = false;
 	ScoreScript scoreScript;
@@ -74,7 +75,7 @@ public class GameManager : Photon.MonoBehaviour {
 				state = State.Game;
 				audioSource.clip = audioclips [1];
 				audioSource.Play ();
-				timer = 10;
+				timer = MaxTime;
 				if (PhotonNetwork.player.name == "") {
 					PhotonNetwork.player.name = "player" + PhotonNetwork.player.ID;
 				}
@@ -238,6 +239,11 @@ public class GameManager : Photon.MonoBehaviour {
 			cube.GetComponent<Renderer> ().material.color = Color.white;
 		}
 		m_photonView.RPC ("ClearStage",PhotonTargets.All);
+	}
+
+	public float GetTimer(){
+		return timer;
+
 	}
 
 

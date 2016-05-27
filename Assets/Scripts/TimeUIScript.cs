@@ -27,7 +27,7 @@ public class TimeUIScript : Photon.MonoBehaviour {
 
 	void timerView(){
 		if (GameManager.GetInstance ().GetState () == 2) {
-			timeLabel.text =  GameManager.GetInstance ().timer.ToString ("f1");
+			timeLabel.text =  GameManager.GetInstance ().GetTimer().ToString ("f1");
 		} else {
 			timeLabel.text = "";
 		}

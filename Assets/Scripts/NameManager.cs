@@ -26,6 +26,11 @@ public class NameManager : MonoBehaviour {
 				PhotonNetwork.playerName = field.GetComponent<InputField> ().text;
 			else
 				PhotonNetwork.playerName = "player"+PhotonNetwork.player.ID;
+
+			// 入る
+			PhotonNetwork.JoinRandomRoom ();
+
+
 			SceneManager.LoadScene ("Unitychan");
 			//Application.LoadLevel ("Unitychan");
 

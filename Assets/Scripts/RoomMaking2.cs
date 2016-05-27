@@ -1,11 +1,12 @@
 ﻿using UnityEngine;
 using System.Collections;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 
 public class RoomMaking2 : Photon.MonoBehaviour {
 
 	//	public InputField field;
-	bool inRoom = false; //roomに入ったかどうか
+	//bool inRoom = false; //roomに入ったかどうか
 	//public static int ID; //PlayerのID
 	private bool isStart = false;
 	string name = "player"; //名前
@@ -43,24 +44,26 @@ public class RoomMaking2 : Photon.MonoBehaviour {
 
 	//  ランダムでルームを選び入る
 	void OnJoinedLobby(){
-		PhotonNetwork.JoinRandomRoom();
-		//
+		if (SceneManager.GetActiveScene ().name == "Unitychan") {
+			PhotonNetwork.JoinRandomRoom ();
+		}
 	}
 
 	//  JoinRandomRoom()が失敗した(false)時に呼ばれる
 	void OnPhotonRandomJoinFailed(){
 		//  部屋に入れなかったので自分で作る
+		//if (SceneManager.GetActiveScene ().name == "Unitychan") {
 		PhotonNetwork.CreateRoom (null);
+		//}
 	}
 
 	//  ルームに入れた時に呼ばれる（自分の作ったルームでも）
 	void OnJoinedRoom(){
-		inRoom = true;
 		GameStart ();
 	}
 
 	public void GameStart(){
-		if (inRoom) {
+		if (PhotonNetwork.inRoom) {
 			Vector3 spawnPosition = new Vector3 (Random.Range (-10, 10), 5, Random.Range (-10, 10)); //生成位置
 
 			// playerの生成、場所はランダム
@@ -96,17 +99,18 @@ public class RoomMaking2 : Photon.MonoBehaviour {
 			//MyCamera.transform.parent = player.transform;
 
 			//Name.transform.parent = player.transform;
-
 		}
-
 	}
 
 
-	/*
+
 	void OnGUI() {
 		// Photon接続状態
-		GUILayout.Label(PhotonNetwork.connectionStateDetailed.ToString());
+		if (SceneManager.GetActiveScene ().name != "Unitychan") {
+			GUILayout.Label ("対戦待ち" + PhotonNetwork.countOfPlayersOnMaster.ToString () + "人");
+			GUILayout.Label ("対戦中" + PhotonNetwork.countOfRooms.ToString () + "人");
+		}
 	}
-	*/
+
 
 }
