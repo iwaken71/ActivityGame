@@ -70,7 +70,7 @@ public class ColorScript : Photon.MonoBehaviour {
 				ChargeImage.color = script.mycolor;
 			} else {
 				
-				ChargeImage.fillAmount = chargetime / 3.0f;
+				ChargeImage.fillAmount = chargetime / 1.5f;
 
 			}
 			transform.position = player.position + Vector3.up * (1.65f + transform.localScale.y * 0.5f);
@@ -139,10 +139,10 @@ public class ColorScript : Photon.MonoBehaviour {
 	}
 
 	void Charge_Rensya(){
-		if (chargetime > 2.0f) {
+		if (chargetime > 2.0f/2) {
 			rensya = 6;
 			interval = 1.0f;
-		} else if(chargetime > 1.0f){
+		} else if(chargetime > 1.0f/2){
 			rensya = 3;
 			interval = 0.8f;
 		}else {
