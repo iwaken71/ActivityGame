@@ -42,7 +42,7 @@ public class UnityChanControlScriptWithRgidBody : Photon.MonoBehaviour
 	private AnimatorStateInfo currentBaseState;			// base layerで使われる、アニメーターの現在の状態の参照
 
 	private GameObject cameraObject;	// メインカメラへの参照
-	public int myID;
+	//public int myID;
 	GameObject colorCube;
 	ScoreScript script;
 	//public bool moguri = false;
@@ -75,15 +75,33 @@ public class UnityChanControlScriptWithRgidBody : Photon.MonoBehaviour
 			source = GetComponent<AudioSource> ();
 		}
 	}
+	/*
 	public void SetID(int ID){
-		myID = PhotonNetwork.player.ID;
+		//myID = PhotonNetwork.player.ID;
 	}
+	*/
 
 
 	// 以下、メイン処理.リジッドボディと絡めるので、FixedUpdate内で処理を行う.
 	void FixedUpdate ()
 	{
 		if (photonView.isMine) {
+
+			if (transform.position.y < -50) {
+				
+				GameObject[] points = GameObject.FindGameObjectsWithTag ("StartPoint");
+				float min_distance = 9999999;
+				Vector3 return_point = Vector3.zero; 
+				foreach(GameObject point in points){
+					if (Vector3.Distance (transform.position, point.transform.position) < min_distance) {
+						min_distance = Vector3.Distance (transform.position, point.transform.position);
+						return_point = point.transform.position;
+					}
+					
+
+				}
+				transform.position = return_point;
+			}
 			/*
 			if (moguri) {
 				forwardSpeed = 10.0f;
@@ -266,9 +284,13 @@ public class UnityChanControlScriptWithRgidBody : Photon.MonoBehaviour
 			if (col.gameObject.tag == "Tofu") {
 				float n = script.mycolor.r + script.mycolor.b * 10 + script.mycolor.g * 100;
 				if (Abs (n - col.gameObject.GetComponent<TofuScript> ().myColorNumber) > 0.01f) {
-					anim.SetBool ("damage", true);
-					source.clip = clip; //倒れる声
-					source.Play ();
+					if(anim.GetBool("damage") == false){
+						anim.SetBool ("damage", true);
+						source.clip = clip; //倒れる声
+						source.Play ();
+						GameObject.Find ("Canvas").GetComponent<Animator> ().SetTrigger ("dead");
+						Invoke ("ReturnStart",1.0f);
+					}
 				}
 			}
 		}
@@ -278,5 +300,11 @@ public class UnityChanControlScriptWithRgidBody : Photon.MonoBehaviour
 			return a;
 		else
 			return -a;
+	}
+
+	void ReturnStart(){
+		GameObject[] points = GameObject.FindGameObjectsWithTag ("StartPoint");
+		int index = Random.Range (0,points.Length-1); 
+		transform.position = points [index].transform.position;
 	}
 }

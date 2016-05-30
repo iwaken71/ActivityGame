@@ -1,11 +1,18 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
+using UnityEngine.SceneManagement;
 
 public class GameManager : Photon.MonoBehaviour {
 
-	public float timer = 60;
-	public AudioClip[] audioclips;
 
+	public AudioClip[] audioclips;
+	public float MaxTime = 60;
+
+
+	float timer = 0;
 	private static GameManager instance = null;
 	bool isGame = false;
 	ScoreScript scoreScript;
@@ -16,15 +23,20 @@ public class GameManager : Photon.MonoBehaviour {
 	string resultMessage = "";
 	Color winColor = Color.blue;
 	Animator canvasAnim;
+	int result_num = 0;
+	List<ScorePoint> pointList = new List<ScorePoint>(); 
+	int playernum = 0;
+	int readynum;
 
-	enum State{
+
+	public enum State{
 		Ready=0,PreGame=1,Game=2,Result=3,Pose=4
 	};
 
 	void Awake(){
 		if (instance == null) {
 			instance = this;
-			DontDestroyOnLoad (this.gameObject);
+			//DontDestroyOnLoad (this.gameObject);
 		} else {
 			Destroy (this.gameObject);
 		}
@@ -37,6 +49,7 @@ public class GameManager : Photon.MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
+		
 		scoreScript = GameObject.FindGameObjectWithTag ("ScoreManager").GetComponent<ScoreScript>();
 		State state = State.Ready;
 		m_photonView = this.GetComponent<PhotonView>();
@@ -58,6 +71,7 @@ public class GameManager : Photon.MonoBehaviour {
 				audioSource.clip = audioclips [0];
 				audioSource.Play ();
 			}
+			playernum = PhotonNetwork.playerList.Length;
 			break;
 		case State.PreGame:
 			countDownTime -= Time.deltaTime;
@@ -65,22 +79,32 @@ public class GameManager : Photon.MonoBehaviour {
 				state = State.Game;
 				audioSource.clip = audioclips [1];
 				audioSource.Play ();
-				timer = 60;
+				timer = MaxTime;
 				if (PhotonNetwork.player.name == "") {
 					PhotonNetwork.player.name = "player" + PhotonNetwork.player.ID;
 				}
+				result_num = 0;
+				pointList.Clear ();
 			}
 			break;
 		case State.Game:
 			timer -= Time.deltaTime;
+			Debug.Log (PhotonNetwork.countOfPlayers);
 			if (timer < 0) {
 				state = State.Result;
 				Result ();
-				Calculation ();
+				playernum = PhotonNetwork.playerList.Length;
+
+				//Invoke ("Calculation",2.0f);
 			}
 			//PhotonNetwork.player.SetScore (scoreScript.myScore);
 			break;
 		case State.Result:
+			if (pointList.Count == playernum) {
+				Calculation ();
+				pointList.Clear ();
+				result_num = 0;
+			}
 			break;
 		case State.Pose:
 			break;
@@ -89,27 +113,66 @@ public class GameManager : Photon.MonoBehaviour {
 		}
 	}
 
-	public void Result(){
-		PhotonNetwork.player.SetScore (scoreScript.myScore);
+	void Result(){
+		//PhotonNetwork.player.SetScore (scoreScript.myScore);
+		//ScorePoint myPoint = new ScorePoint (PhotonNetwork.player.ID,PhotonNetwork.playerName,scoreScript.myScore);
+		//pointList.Add (myPoint);
+		//result_num++;
+		m_photonView.RPC ("SendPoint",PhotonTargets.All,PhotonNetwork.player.ID,PhotonNetwork.playerName,scoreScript.myScore);
 	}
 	void Calculation(){
-		PhotonPlayer max_player = PhotonNetwork.player;
+		string max_Player = "--";
+		int max_Score = -1;
+		int max_id = -1;
+
+		var newList = pointList
+			.OrderByDescending (point => point.score)
+			.ToList();
+		string mes = "";
+		int num = 1;//順位
+		foreach (ScorePoint score in newList){
+			mes += "No." + num.ToString () + ": " + score.GetName () + " Score: " + score.GetScore ().ToString()+"\n";
+			num++;
+		}
+		resultMessage = mes;
+		/*
+		foreach (ScorePoint score in pointList) {
+			if (score.GetScore () > max_Score) {
+				max_Score = score.GetScore ();
+				max_Player = score.GetName();
+				max_id = score.GetID ();
+			}
+		}
+
+		if (PhotonNetwork.player.ID == max_id) {
+			resultMessage = "1位: " + max_Player + " Score:" + max_Score.ToString ()+"\n"+"おめでとう！";
+		} else {
+			resultMessage = "1位:" + max_Player + " Score:" + max_Score.ToString ()+"\n"+"残念...";
+		}
+		*/
+
+		
+	}
+	/*
+	void Calculation(){
+		//PhotonPlayer max_player = PhotonNetwork.player;
 		int max_player_ID = -1;
 		int max_Score = -1;
-		foreach (PhotonPlayer player in PhotonNetwork.playerList) {
-			if (max_Score < player.GetScore ()) {
-				max_Score = player.GetScore ();
-				max_player_ID = player.ID;
-				max_player = player;
+		string max_player = "---";
+		foreach (PhotonPlayer player0 in PhotonNetwork.playerList) {
+			if (max_Score < player0.GetScore ()) {
+				max_Score = player0.GetScore ();
+				max_player_ID = player0.ID;
+				max_player = player0.name;
 			}
 		}
 		if (PhotonNetwork.player.ID == max_player_ID) {
-			resultMessage = "1位 Player名:" + max_player.name + " Score:" + max_Score.ToString ()+"\n"+"おめでとう！";
+			resultMessage = "1位: " + max_player + " Score:" + max_Score.ToString ()+"\n"+"おめでとう！";
 		} else {
-			resultMessage = "1位 Player名:" + max_player.name + " Score:" + max_Score.ToString ()+"\n"+"残念...";
+			resultMessage = "1位 Player名:" + max_player + " Score:" + max_Score.ToString ()+"\n"+"残念...";
 		}
 		Debug.Log ("cal");
-	}
+	}*/
 
 	public static GameManager GetInstance(){
 		return instance;
@@ -161,4 +224,37 @@ public class GameManager : Photon.MonoBehaviour {
 	public string GetRusultMessage(){
 		return resultMessage;
 	}
+
+	[PunRPC]
+	public void ClearStage(){
+		foreach (GameObject cube in GameObject.FindGameObjectsWithTag ("Stage")) {
+			cube.GetComponent<Renderer> ().material.color = Color.white;
+		}
+	}
+	[PunRPC]
+	void SendPoint(int id,string name,int score){
+		ScorePoint point1 = new ScorePoint (id,name,score);
+		pointList.Add (point1);
+		result_num++;
+	}
+
+	public void GameStartButton(){
+		foreach (GameObject cube in GameObject.FindGameObjectsWithTag ("Stage")) {
+			cube.GetComponent<Renderer> ().material.color = Color.white;
+		}
+		m_photonView.RPC ("ClearStage",PhotonTargets.All);
+	}
+
+	public float GetTimer(){
+		return timer;
+
+	}
+
+	public void ToEnd(){
+		PhotonNetwork.LeaveRoom ();
+		SceneManager.LoadScene ("Start");
+
+	}
+
+
 }

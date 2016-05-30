@@ -29,10 +29,19 @@ public class ColorScript : Photon.MonoBehaviour {
 	// Use this for initialization
 	void Awake(){
 		if (photonView.isMine) {
-			
+
 			_renderer = this.GetComponent<Renderer> ();
 			tofu = Resources.Load ("Tofu") as GameObject;
-			_renderer.material.color = new Color (Random.value, Random.value, Random.value, 1.0f);
+			int index = Random.Range (0,3);
+			if (index == 0) {
+				_renderer.material.color = new Color (1.0f, Random.value, Random.value, 1.0f);
+			} else if (index == 1) {
+				_renderer.material.color = new Color (Random.value, 1.0f,Random.value, 1.0f);
+			} else {
+				_renderer.material.color = new Color (Random.value, Random.value, 1.0f, 1.0f);
+			}
+
+
 
 
 
@@ -59,17 +68,17 @@ public class ColorScript : Photon.MonoBehaviour {
 		}
 
 	}
-	
+
 	// Update is called once per frame
 	void Update () {
-		
+
 		if (photonView.isMine) {
 			if (ChargeObj == null) {
 				ChargeObj = GameObject.FindGameObjectWithTag ("Charge");
 				ChargeImage = ChargeObj.GetComponent<Image> ();
 				ChargeImage.color = script.mycolor;
 			} else {
-				
+
 				ChargeImage.fillAmount = chargetime / 3.0f;
 
 			}
@@ -77,8 +86,8 @@ public class ColorScript : Photon.MonoBehaviour {
 			if (timer > 0) {
 				timer -= Time.deltaTime;
 			}
-
-			if ((Input.GetKeyUp ("x")||/*Input.GetMouseButtonUp(0)||*/Input.GetKeyUp("k"))&& term >= 0 && timer <= 0) {
+			// Game中でしかショットできない
+			if (Input.GetMouseButtonUp(0)/*Input.GetMouseButtonUp(0)||*/ && term >= 0 && timer <= 0) {
 				Shot ();
 				term -= Time.deltaTime;
 				chargetime = 0;
@@ -87,22 +96,23 @@ public class ColorScript : Photon.MonoBehaviour {
 					term = 0.2f;
 				}
 			}
-			if ((Input.GetKey ("x") || /*Input.GetMouseButton (0) ||*/ Input.GetKey ("k"))) {
+			if (Input.GetMouseButton(0)) {
 				if (chargetime <= 3) {
-					chargetime += Time.deltaTime;
+					chargetime += Time.deltaTime*2;
 				}
 			} else {
 				chargetime = 0;
 			}
-		
-		
+
+
 			this.transform.localScale = Vector3.one * 0.1f + Vector3.one * script.myScore * 0.025f;
+
 			//Level ();
 		}
 	}
 
-		
-	
+
+
 
 	public void Shot(){
 		int random = Random.Range (0,2);

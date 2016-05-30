@@ -23,9 +23,14 @@ public class NameManager : MonoBehaviour {
 
 			GameObject field = GameObject.FindGameObjectWithTag ("InputField");
 			if (field.GetComponent<InputField> ().text != "")
-				PhotonNetwork.player.name = field.GetComponent<InputField> ().text;
+				PhotonNetwork.playerName = field.GetComponent<InputField> ().text;
 			else
-				PhotonNetwork.player.name = "player"+PhotonNetwork.player.ID;
+				PhotonNetwork.playerName = "player"+PhotonNetwork.player.ID;
+
+			// 入る
+			PhotonNetwork.JoinRandomRoom ();
+
+
 			SceneManager.LoadScene ("Unitychan");
 			//Application.LoadLevel ("Unitychan");
 

@@ -28,7 +28,7 @@ public class TofuScript : Photon.MonoBehaviour {
 	void OnCollisionEnter(Collision col){
 		if (col.gameObject.tag == "Stage") {
 			// カウントダウン中はしない
-			if (GameManager.GetInstance ().GetState () != 1) {
+			if (GameManager.GetInstance ().GetState () == 2) {
 				col.gameObject.GetComponent<Renderer> ().material.color = this.GetComponent<Renderer> ().material.color;
 			}
 			//Destroy (this.gameObject,0.05f);
