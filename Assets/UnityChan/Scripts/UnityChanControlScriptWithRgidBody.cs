@@ -285,11 +285,11 @@ public class UnityChanControlScriptWithRgidBody : Photon.MonoBehaviour
 				float n = script.mycolor.r + script.mycolor.b * 10 + script.mycolor.g * 100;
 				if (Abs (n - col.gameObject.GetComponent<TofuScript> ().myColorNumber) > 0.01f) {
 					if(anim.GetBool("damage") == false){
-					anim.SetBool ("damage", true);
-					source.clip = clip; //倒れる声
-					source.Play ();
-					GameObject.Find ("Canvas").GetComponent<Animator> ().SetTrigger ("dead");
-					Invoke ("ReturnStart",1.0f);
+						anim.SetBool ("damage", true);
+						source.clip = clip; //倒れる声
+						source.Play ();
+						GameObject.Find ("Canvas").GetComponent<Animator> ().SetTrigger ("dead");
+						Invoke ("ReturnStart",1.0f);
 					}
 				}
 			}

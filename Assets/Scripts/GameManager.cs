@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using UnityEngine.SceneManagement;
 
 public class GameManager : Photon.MonoBehaviour {
 
@@ -28,14 +29,14 @@ public class GameManager : Photon.MonoBehaviour {
 	int readynum;
 
 
-	enum State{
+	public enum State{
 		Ready=0,PreGame=1,Game=2,Result=3,Pose=4
 	};
 
 	void Awake(){
 		if (instance == null) {
 			instance = this;
-			DontDestroyOnLoad (this.gameObject);
+			//DontDestroyOnLoad (this.gameObject);
 		} else {
 			Destroy (this.gameObject);
 		}
@@ -246,6 +247,12 @@ public class GameManager : Photon.MonoBehaviour {
 
 	public float GetTimer(){
 		return timer;
+
+	}
+
+	public void ToEnd(){
+		PhotonNetwork.LeaveRoom ();
+		SceneManager.LoadScene ("Start");
 
 	}
 

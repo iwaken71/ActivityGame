@@ -29,10 +29,19 @@ public class ColorScript : Photon.MonoBehaviour {
 	// Use this for initialization
 	void Awake(){
 		if (photonView.isMine) {
-			
+
 			_renderer = this.GetComponent<Renderer> ();
 			tofu = Resources.Load ("Tofu") as GameObject;
-			_renderer.material.color = new Color (Random.value, Random.value, Random.value, 1.0f);
+			int index = Random.Range (0,3);
+			if (index == 0) {
+				_renderer.material.color = new Color (1.0f, Random.value, Random.value, 1.0f);
+			} else if (index == 1) {
+				_renderer.material.color = new Color (Random.value, 1.0f,Random.value, 1.0f);
+			} else {
+				_renderer.material.color = new Color (Random.value, Random.value, 1.0f, 1.0f);
+			}
+
+
 
 
 
@@ -59,26 +68,26 @@ public class ColorScript : Photon.MonoBehaviour {
 		}
 
 	}
-	
+
 	// Update is called once per frame
 	void Update () {
-		
+
 		if (photonView.isMine) {
 			if (ChargeObj == null) {
 				ChargeObj = GameObject.FindGameObjectWithTag ("Charge");
 				ChargeImage = ChargeObj.GetComponent<Image> ();
 				ChargeImage.color = script.mycolor;
 			} else {
-				
-				ChargeImage.fillAmount = chargetime / 1.5f;
+
+				ChargeImage.fillAmount = chargetime / 3.0f;
 
 			}
 			transform.position = player.position + Vector3.up * (1.65f + transform.localScale.y * 0.5f);
 			if (timer > 0) {
 				timer -= Time.deltaTime;
 			}
-
-			if (Input.GetKeyUp (KeyCode.Space)/*Input.GetMouseButtonUp(0)||*/&& term >= 0 && timer <= 0) {
+			// Game中でしかショットできない
+			if (Input.GetMouseButtonUp(0)/*Input.GetMouseButtonUp(0)||*/ && term >= 0 && timer <= 0) {
 				Shot ();
 				term -= Time.deltaTime;
 				chargetime = 0;
@@ -87,22 +96,23 @@ public class ColorScript : Photon.MonoBehaviour {
 					term = 0.2f;
 				}
 			}
-			if (Input.GetKey (KeyCode.Space)){
+			if (Input.GetMouseButton(0)) {
 				if (chargetime <= 3) {
-					chargetime += Time.deltaTime;
+					chargetime += Time.deltaTime*2;
 				}
 			} else {
 				chargetime = 0;
 			}
-		
-		
+
+
 			this.transform.localScale = Vector3.one * 0.1f + Vector3.one * script.myScore * 0.025f;
+
 			//Level ();
 		}
 	}
 
-		
-	
+
+
 
 	public void Shot(){
 		int random = Random.Range (0,2);
@@ -139,10 +149,10 @@ public class ColorScript : Photon.MonoBehaviour {
 	}
 
 	void Charge_Rensya(){
-		if (chargetime > 2.0f/2) {
+		if (chargetime > 2.0f) {
 			rensya = 6;
 			interval = 1.0f;
-		} else if(chargetime > 1.0f/2){
+		} else if(chargetime > 1.0f){
 			rensya = 3;
 			interval = 0.8f;
 		}else {
